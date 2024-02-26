@@ -1,20 +1,23 @@
-from threading import Thread, Event
-from time import sleep
-from http.server import BaseHTTPRequestHandler, HTTPServer
-
 import pyautogui
 import pydirectinput
 import time 
 import pygetwindow
+
+from threading import Thread, Event
+from time import sleep
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pygetwindow import PyGetWindowException
 
-hostname = "192.168.56.1"
+from roles import Role, Farmer
+
+hostname = "192.168.1.61"
 serverPort = 8080
 
-
-
-# create a new Event object
+# Create a new Event object
 event = Event()
+
+Val01 = Farmer(Role)
+Val02 = Farmer(Role)
 
 class Worker(Thread):
     def __init__(self, event, *args, **kwargs):
@@ -23,18 +26,13 @@ class Worker(Thread):
 
     def run(self) -> None:
 
-        
-        
-
         while True:
             w = pygetwindow.getWindowsWithTitle('METIN2')[0]
             w.activate()
-            pydirectinput.press('1',1)
-            pydirectinput.press('z',4)
+            Val01.act()
             w1 = pygetwindow.getWindowsWithTitle('METIN2')[1]
             w1.activate()
-            pydirectinput.press('1',1)
-            pydirectinput.press('z',4)
+            Val02.act()
 
             if self.event.is_set():
                 print('Workers Terminated.')
@@ -64,7 +62,7 @@ class Server(BaseHTTPRequestHandler):
         print(line)
 
         if line == 'start':
-            print('Starting Workers')
+            print('Workers Node Started')
             thread = Worker(event)
             thread.start()
             
@@ -77,9 +75,6 @@ class Server(BaseHTTPRequestHandler):
             event.clear()
             print('Workers ready again')
             messagge = "Worker stopped"
-
-            
-
 
         self.wfile.write(bytes(messagge,"utf-8"))
 

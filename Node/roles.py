@@ -2,16 +2,13 @@ import pydirectinput
 
 class Role:
 
-    role = ""
+    name = ""
 
     def __init__(self, name):
-        self.role = name
-
-    def act():
-        pass
+        self.name = name
 
 
 class Farmer(Role):
-    def act():
+    def act(self):
         pydirectinput.press('1',1)
         pydirectinput.press('z',4)
