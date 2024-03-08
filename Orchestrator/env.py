@@ -6,6 +6,7 @@ options = [
 commands = [
     "start",
     "stop",
+    "deploy"
 ]
 
 Nodes = {
@@ -25,7 +26,6 @@ Nodes = {
     "port":"8080"
     },  
 }
-
 
 NodeList = []
 

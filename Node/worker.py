@@ -1,1 +1,1 @@
-from Nodes.TestNode.worker import Worker
+from Nodes.TestNode.worker import act

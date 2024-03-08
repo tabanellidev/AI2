@@ -2,19 +2,32 @@ import pyautogui
 import pydirectinput
 import time 
 
-
-
 from threading import Event
 from time import sleep
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pygetwindow import PyGetWindowException
+from threading import Thread
 
 from env import hostname, serverPort
-from worker import Worker
+from worker import act
 
 # Create a new Event object
 event = Event()
 
+class Worker(Thread):
+    def __init__(self, event, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.event = event
+
+    def run(self) -> None:
+
+        while True:
+            
+            act()
+
+            if self.event.is_set():
+                print('Workers Terminated.')
+                break
 
 class Server(BaseHTTPRequestHandler):
     def do_GET(self):
