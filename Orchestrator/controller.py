@@ -1,8 +1,8 @@
 from functions import options, execute_option, parse
 from env import commands, NodeList, Nodes, options
 
-print("Nodes Avaible    ", NodeList)
 print("Commands Avaible ", commands)
+print("Nodes Avaible    ", NodeList)
 
 while(1):
 

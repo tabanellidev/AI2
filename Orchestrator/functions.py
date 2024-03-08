@@ -1,10 +1,30 @@
 import sys
 import requests
 import paramiko
+import os
+from zipfile import ZipFile
+from pathlib import Path
 from paramiko import SSHClient
 from scp import SCPClient
 from env import commands, NodeList, Nodes, options
+
 from users import Users
+'''
+For security reason users.py is not published on Github, but it should contain a json "Users" with the following structure
+
+Users = {
+    "nodeid": {
+    "user":"test",
+    "ip": "127.0.0.1",
+    "password":"test",
+    "port":"22",
+    "path":"/Users/Test/Desktop/"
+    },
+    ...
+}
+
+'''
+
 
 def createSSHClient(server, port, user, password):
     client = paramiko.SSHClient()
@@ -22,8 +42,6 @@ def execute_option(command):
                 print(Nodes[node]['id'],'\t',Nodes[node]['ip'],'\t',Nodes[node]['port'])
         case 'quit':
             sys.exit("Quitting...")
-
-
 
 def start(node):
     
@@ -63,12 +81,26 @@ def deploy(node):
     password = Users[node]['password']
     path = Users[node]['path']
 
+    node_path = os.path.join(Path.cwd().parent, 'Node\\Nodes\\'+node)
+
+    worker_path = os.path.join(node_path, 'worker.py')
+    env_path = os.path.join(node_path, 'env.py')
+
+    print('Worker selected ' , worker_path)
+    print('Env selected', env_path)
+
+    with ZipFile('Deployment.zip', 'w') as zip_object:
+        zip_object.write(worker_path, os.path.basename(worker_path))
+        zip_object.write(env_path, os.path.basename(env_path))
+
+    print('File Zip created')
+
     ssh = createSSHClient(ip,port, user, password)
     scp = SCPClient(ssh.get_transport())
 
-    scp.put('M1.txt',path)
+    scp.put('Deployment.zip',path)
 
-    msg = "File deployed"
+    msg = "File Zip deployed"
 
     return msg
 
