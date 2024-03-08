@@ -1,4 +1,5 @@
 /env
+/Node/node_env
 __pycache__/
 /Orchestrator/users.py
 /Orchestrator/Deployemnt.zip

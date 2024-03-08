@@ -11,6 +11,8 @@ while(1):
     if command in options:
         execute_option(command)
     else:
+        print('------------------------')
         msg = parse(command)
         print(msg)
+        print('------------------------')
 

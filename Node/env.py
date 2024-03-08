@@ -1,1 +1,1 @@
-from Nodes.TestNode.env import hostname, serverPort
+from Nodes.test.env import hostname, serverPort

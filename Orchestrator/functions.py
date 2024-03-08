@@ -2,6 +2,8 @@ import sys
 import requests
 import paramiko
 import os
+import shutil
+from datetime import datetime
 from zipfile import ZipFile
 from pathlib import Path
 from paramiko import SSHClient
@@ -69,8 +71,6 @@ def stop(node):
     msg = requests.post(url,data, headers)
     return msg.text
 
-
-
 def deploy(node):
     
     print("Connection Information: ", Users[node])
@@ -81,26 +81,41 @@ def deploy(node):
     password = Users[node]['password']
     path = Users[node]['path']
 
+    filename = node + '_' +datetime.now().strftime('%m-%d') + '.zip'
+
+    requirements_path = os.path.join(Path.cwd().parent, 'Node\\requirements.txt')
+    listener_path = os.path.join(Path.cwd().parent, 'Node\\actor_listener.py')
+
     node_path = os.path.join(Path.cwd().parent, 'Node\\Nodes\\'+node)
 
     worker_path = os.path.join(node_path, 'worker.py')
     env_path = os.path.join(node_path, 'env.py')
 
-    print('Worker selected ' , worker_path)
-    print('Env selected', env_path)
+    print('Listerner path   ', listener_path)
+    print('Worker path      ', worker_path)
+    print('Env path         ', env_path)
 
-    with ZipFile('Deployment.zip', 'w') as zip_object:
+
+    with ZipFile(filename, 'w') as zip_object:
+        
+        zip_object.write(requirements_path, os.path.basename(requirements_path))
+        zip_object.write(listener_path, os.path.basename(listener_path))
         zip_object.write(worker_path, os.path.basename(worker_path))
         zip_object.write(env_path, os.path.basename(env_path))
 
-    print('File Zip created')
+    print('Archive Zip ' + filename + ' created')
 
     ssh = createSSHClient(ip,port, user, password)
     scp = SCPClient(ssh.get_transport())
 
-    scp.put('Deployment.zip',path)
+    scp.put(filename,path)
 
-    msg = "File Zip deployed"
+    print('Archive Zip ' + filename + ' deployed')
+
+    shutil.move(filename, 'Repository/' + filename)
+
+
+    msg = "Archive Zip moved into repository"
 
     return msg
 

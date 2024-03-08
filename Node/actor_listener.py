@@ -1,6 +1,5 @@
 import pyautogui
 import pydirectinput
-import time 
 
 from threading import Event
 from time import sleep
